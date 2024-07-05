@@ -31,9 +31,9 @@ async function findProducerMaxInterval() {
 
     SELECT 
         producer,
+        interval,
         previousWin,
-        year AS followingWin,
-        interval
+        year AS followingWin  
     FROM 
         FilteredIntervals
     ORDER BY 
