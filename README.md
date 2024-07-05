@@ -45,7 +45,7 @@ Abra um navegador web e acesse a aplicação localmente através do endereço:
 http://localhost:3000/api/producers
 ```
 
-## 4. Testes
+## 5. Testes
 Para rodar os testes automatizados, utilize o seguinte comando:
 
 ```bash
