@@ -9,7 +9,7 @@
   "scripts": {
     "start": "ts-node src/app.ts",
     "build": "tsc",
-    "test": "jest --forceExit"
+    "test": "jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
