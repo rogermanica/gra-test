@@ -13,7 +13,6 @@ const init = async (): Promise<void> => {
     try {
         await sequelize.sync({ force: true });
         await loadCSVData();
-        console.log('Carga de dados concluída!');
     } catch (error) {
         console.error('Falha ao iniciar banco de dados ou a carga de dados:', error);
         throw error;
