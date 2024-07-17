@@ -20,26 +20,35 @@ async function findProducerMaxInterval() {
     FilteredIntervals AS (
         SELECT 
             producer,
-            year,
+            year AS followingWin,
             previousWin,
             interval
         FROM 
             AwardIntervals
         WHERE 
             previousWin IS NOT NULL
+    ),
+
+    MaxInterval AS (
+        SELECT 
+            MAX(interval) AS max_interval
+        FROM 
+            FilteredIntervals
     )
 
     SELECT 
-        producer,
-        interval,
-        previousWin,
-        year AS followingWin  
+        f.producer,
+        f.interval,
+        f.previousWin,
+        f.followingWin
     FROM 
-        FilteredIntervals
+        FilteredIntervals f
+    JOIN 
+        MaxInterval m
+    ON 
+        f.interval = m.max_interval
     ORDER BY 
-        interval DESC,
-        producer
-    LIMIT 1;`;
+        f.producer;`;
     return await sequelize.query(query, {
         type: QueryTypes.SELECT,
     });
@@ -62,27 +71,35 @@ async function findProducerMinInterval() {
     FilteredIntervals AS (
         SELECT 
             producer,
-            year,
+            year AS followingWin,
             previousWin,
             interval
         FROM 
             AwardIntervals
         WHERE 
             previousWin IS NOT NULL
+    ),
+
+    MinInterval AS (
+        SELECT 
+            MIN(interval) AS min_interval
+        FROM 
+            FilteredIntervals
     )
 
     SELECT 
-        producer,
-        interval,
-        previousWin,
-        year AS followingWin
+        f.producer,
+        f.interval,
+        f.previousWin,
+        f.followingWin
     FROM 
-        FilteredIntervals
+        FilteredIntervals f
+    JOIN 
+        MinInterval m
+    ON 
+        f.interval = m.min_interval
     ORDER BY 
-        interval ASC,
-        producer
-    LIMIT 1;
-        `;
+        f.producer;`;
 
     return await sequelize.query(query, {
         type: QueryTypes.SELECT,
