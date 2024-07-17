@@ -46,27 +46,28 @@ const loadCSVData = async (): Promise<void> => {
         });
     } catch (err) {
         console.error('Ocorreu um erro ao fazer o parse do arquivo CSV:', err);
+        throw err;
     }
 };
 
 const processCSVResult = async (result: any[]): Promise<void> => {
-    for (const item of result) {
-        if (item.producers) {
-            const producers = item.producers.split(',').map((p: string) => p.trim());
-            for (const producer of producers) {
-                try {
-                    if (producer && item.year && item.winner !== undefined) {
-                        await Producer.create({
-                            name: producer,
-                            year: item.year,
-                            winner: item.winner
-                        });
-                    }
-                } catch (err) {
-                    console.error(`Erro ao inserir dados do produtor ${producer}:`, err);
-                }
-            }
+    try {
+        const items = result.flatMap(item => {
+            if (!item.producers || !item.year || !item.winner) return [];
+    
+            const producers = item.producers.split(',').map((p: string) => p.trim()).filter(Boolean);
+            return producers.map((producer: any) => ({
+                name: producer,
+                year: item.year,
+                winner: item.winner
+            }));
+        });
+    
+        if (items.length > 0) {
+            await Producer.bulkCreate(items);
         }
+    } catch (err) {
+        throw new Error(`Erro ao inserir dados do produtor: ${err}`);
     }
 };
 
