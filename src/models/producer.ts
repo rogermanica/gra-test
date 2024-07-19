@@ -11,14 +11,18 @@ const Producer = sequelize.define('producer', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  year: {
+  previousWin: {
     type: DataTypes.NUMBER,
     allowNull: false,
   },
-  winner: {
-    type: DataTypes.BOOLEAN,
+  followingWin: {
+    type: DataTypes.NUMBER,
     allowNull: false,
   },
+  interval: {
+    type: DataTypes.NUMBER,
+    allowNull: false,
+  }
 });
 
 export default Producer;

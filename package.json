@@ -16,7 +16,6 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
-    "csv-parse": "^5.5.6",
     "express": "^4.19.2",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7"

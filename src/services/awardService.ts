@@ -1,106 +1,21 @@
-import Producer from '../models/producer';
 import sequelize from '../db';
 import { QueryTypes } from 'sequelize';
 
-
-async function findProducerMaxInterval() {
-    const query = `
-    WITH AwardIntervals AS (
-    SELECT 
-        name AS producer,
-        year,
-        LAG(year) OVER (PARTITION BY name ORDER BY year) AS previousWin,
-        year - LAG(year) OVER (PARTITION BY name ORDER BY year) AS interval
-    FROM 
-        producers
-    WHERE 
-        winner = 1
-    ),
-
-    FilteredIntervals AS (
-        SELECT 
-            producer,
-            year AS followingWin,
-            previousWin,
-            interval
-        FROM 
-            AwardIntervals
-        WHERE 
-            previousWin IS NOT NULL
-    ),
-
-    MaxInterval AS (
-        SELECT 
-            MAX(interval) AS max_interval
-        FROM 
-            FilteredIntervals
-    )
-
-    SELECT 
-        f.producer,
-        f.interval,
-        f.previousWin,
-        f.followingWin
-    FROM 
-        FilteredIntervals f
-    JOIN 
-        MaxInterval m
-    ON 
-        f.interval = m.max_interval
-    ORDER BY 
-        f.producer;`;
+async function findProducerMinInterval() {
+    const query =  `SELECT name AS producer, interval, previousWin, followingWin
+            FROM producers
+            ORDER BY interval ASC
+            LIMIT 2;`
     return await sequelize.query(query, {
         type: QueryTypes.SELECT,
     });
 }
 
-async function findProducerMinInterval() {
-    const query = `
-    WITH AwardIntervals AS (
-    SELECT 
-        name AS producer,
-        year,
-        LAG(year) OVER (PARTITION BY name ORDER BY year) AS previousWin,
-        year - LAG(year) OVER (PARTITION BY name ORDER BY year) AS interval
-    FROM 
-        producers
-    WHERE 
-        winner = 1
-    ),
-
-    FilteredIntervals AS (
-        SELECT 
-            producer,
-            year AS followingWin,
-            previousWin,
-            interval
-        FROM 
-            AwardIntervals
-        WHERE 
-            previousWin IS NOT NULL
-    ),
-
-    MinInterval AS (
-        SELECT 
-            MIN(interval) AS min_interval
-        FROM 
-            FilteredIntervals
-    )
-
-    SELECT 
-        f.producer,
-        f.interval,
-        f.previousWin,
-        f.followingWin
-    FROM 
-        FilteredIntervals f
-    JOIN 
-        MinInterval m
-    ON 
-        f.interval = m.min_interval
-    ORDER BY 
-        f.producer;`;
-
+async function findProducerMaxInterval() {
+    const query =  `SELECT name AS producer, interval, previousWin, followingWin
+            FROM producers
+            ORDER BY interval DESC
+            LIMIT 2;`
     return await sequelize.query(query, {
         type: QueryTypes.SELECT,
     });
@@ -115,5 +30,6 @@ async function findAwards() {
         max: max
     };
 }
+
 
 export { findAwards };
